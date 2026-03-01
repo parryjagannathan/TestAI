@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protiviti | Path to Transformation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+    background: #7ec8e3;
+  }
+  
+  /* ===== SCREENS ===== */
+  .screen {
+    display: none;
+    width: 100%; height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+  .screen.active { display: flex; }
+  
+  /* ===== SHARED ELEMENTS ===== */
+  .protiviti-logo {
+    font-size: 1.5rem; color: #1a2a3a; font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+  .protiviti-logo-white { color: white; }
+  .protiviti-logo sup { font-size: 0.5em; vertical-align: super; }
+  .user-tag {
+    position: absolute; top: 1.2rem; right: 2rem;
+    background: white; padding: 0.45rem 1.1rem;
+    border-radius: 50px; font-size: 0.88rem; color: #1a2a3a;
+    font-weight: 500; z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .touch-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    color: rgba(26,58,92,0.6); font-size: 0.72rem; letter-spacing: 0.2em;
+    animation: pulse 2s infinite; text-align: center;
+  }
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+  
+  /* ===== SPLASH ===== */
+  #splash {
+    background: linear-gradient(160deg, #4a9bc5 0%, #2a7aaa 30%, #7ec8e3 70%, #c0e8f5 100%);
+    align-items: center; justify-content: center;
+    flex-direction: column; cursor: pointer;
+  }
+  .splash-mountain {
+    width: min(500px, 70vw); height: min(320px, 45vh);
+    background: radial-gradient(ellipse at 50% 85%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.5) 30%, transparent 60%);
+    position: relative; margin-top: 2rem;
+  }
+  .splash-mountain::before {
+    content: '';
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 160px solid transparent; border-right: 160px solid transparent;
+    border-bottom: 280px solid rgba(200,230,245,0.8);
+    filter: drop-shadow(0 0 30px rgba(255,255,255,0.8));
+  }
+  .splash-peak {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 4px; height: 60px;
+    background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
+    filter: blur(2px);
+  }
+  .splash-title {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    text-align: center; white-space: nowrap;
+  }
+  .splash-title-main {
+    display: block; font-size: clamp(0.8rem, 2vw, 1.1rem);
+    color: rgba(255,255,255,0.8); letter-spacing: 0.3em; text-transform: uppercase;
+    font-weight: 300;
+  }
+  .splash-title-big {
+    display: block; font-size: clamp(1.8rem, 5vw, 3rem);
+    color: white; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+  #splash .protiviti-logo {
+    position: absolute; top: 1.8rem; left: 50%; transform: translateX(-50%);
+    font-size: 2rem;
+  }
+  
+  /* ===== INTRO SLIDES ===== */
+  .intro-slide {
+    align-items: center; justify-content: center;
+    flex-direction: column; cursor: pointer;
+    background: linear-gradient(135deg, #7ec8e3 0%, #5bb3d0 30%, #b8e4f2 60%, #e8f7fd 100%);
+  }
+  .intro-text {
+    font-size: clamp(1.5rem, 4vw, 2.6rem);
+    color: #1a2a3a; text-align: center; line-height: 1.55;
+    max-width: 75%; font-weight: 300;
+  }
+  .intro-text .hl { color: #1a6bb5; font-weight: 600; }
+  #slide2 { background: linear-gradient(135deg, #9dd8ee 0%, #7ec8e3 40%, #c8eaf6 70%, #f0f9ff 100%); }
+  #slide3 { background: linear-gradient(135deg, #c8eaf6 0%, #a0d4e8 40%, #dff2fb 70%, #f5fbff 100%); }
+  #slide2 .intro-text, #slide3 .intro-text { color: #1a3a5c; }
+  .intro-slide .protiviti-logo { position: absolute; bottom: 2rem; right: 2rem; }
+  
+  /* ===== REGISTRATION ===== */
+  #registration {
+    flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, #5bb3d0 0%, #7ec8e3 40%, #a8d8ea 70%, #caeafa 100%);
+  }
+  #registration .protiviti-logo { position: absolute; top: 1.8rem; left: 50%; transform: translateX(-50%); font-size: 2rem; }
+  .reg-title {
+    font-size: clamp(1.5rem, 4vw, 2.5rem); color: #e8f4ff;
+    font-weight: 300; margin-bottom: 2rem; text-align: center;
+  }
+  .reg-form { width: 90%; max-width: 860px; display: flex; flex-direction: column; gap: 1.2rem; }
+  .reg-row { display: flex; gap: 1.2rem; }
+  .reg-input {
+    flex: 1; padding: 1.1rem 1.5rem; border-radius: 50px; border: none;
+    background: rgba(255,255,255,0.72); font-size: 1.05rem; color: #1a2a3a;
+    outline: none; backdrop-filter: blur(8px); transition: background 0.2s;
+    font-family: inherit;
+  }
+  .reg-input::placeholder { color: #4a7a9b; }
+  .reg-input:focus { background: rgba(255,255,255,0.92); }
+  .begin-btn {
+    width: 100%; padding: 1.2rem; border-radius: 50px; border: none;
+    background: #1a3a5c; color: white; font-size: 1.15rem; cursor: pointer;
+    transition: all 0.2s; letter-spacing: 0.02em; font-family: inherit;
+  }
+  .begin-btn:hover { background: #0f2640; transform: translateY(-1px); }
+  .begin-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+  .privacy { text-align: center; margin-top: 0.5rem; }
+  .privacy p { color: #1a3a5c; font-size: 0.85rem; line-height: 1.5; }
+  .privacy p:first-child { font-weight: 500; }
+  
+  /* ===== WELCOME ===== */
+  #welcome {
+    flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer;
+    background: linear-gradient(160deg, #5bb3d0 0%, #7ec8e3 40%, #a8d8ea 70%, #caeafa 100%);
+    padding: 5rem 2rem 2rem;
+  }
+  #welcome .protiviti-logo { position: absolute; top: 1.5rem; left: 50%; transform: translateX(-50%); font-size: 1.8rem; }
+  .welcome-card {
+    background: rgba(255,255,255,0.62); backdrop-filter: blur(12px);
+    border-radius: 18px; padding: 2.5rem 3rem;
+    max-width: 900px; width: 100%; text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+  .welcome-greeting { font-size: clamp(1.4rem, 3.5vw, 2.2rem); color: #1a3a5c; font-weight: 400; margin-bottom: 0.5rem; }
+  .welcome-sub { color: #2a5a8a; font-size: 0.92rem; margin-bottom: 2rem; }
+  .welcome-features { display: flex; gap: 2rem; justify-content: center; }
+  .feature { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.8rem; }
+  .feature-icon { font-size: 2.5rem; }
+  .feature p { font-size: 0.87rem; color: #1a3a5c; line-height: 1.5; text-align: center; }
+  .welcome-tagline { margin-top: 1.8rem; font-size: clamp(1.1rem, 2.8vw, 1.8rem); color: #1a3a5c; font-weight: 300; text-align: center; }
+  #welcome .touch-hint { color: rgba(26,58,92,0.55); }
+  
+  /* ===== STEPPER ===== */
+  .stepper {
+    position: absolute; top: 1.1rem; left: 50%; transform: translateX(-50%);
+    width: 45%; display: flex; align-items: center; gap: 0;
+  }
+  .step-dot {
+    width: 13px; height: 13px; border-radius: 50%;
+    background: rgba(255,255,255,0.3); border: 2px solid rgba(255,255,255,0.5);
+    flex-shrink: 0; position: relative; transition: all 0.3s;
+  }
+  .step-dot.active { background: #1a3a5c; border-color: #1a3a5c; width: 15px; height: 15px; }
+  .step-dot.done { background: #1a3a5c; border-color: #1a3a5c; }
+  .step-num {
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    font-size: 0.7rem; color: rgba(255,255,255,0.75); white-space: nowrap;
+  }
+  .step-line { flex: 1; height: 2px; background: rgba(255,255,255,0.3); transition: background 0.3s; }
+  .step-line.done { background: #1a3a5c; }
+  
+  /* ===== QUESTION CONTEXT ===== */
+  .qctx-screen {
+    flex-direction: column; align-items: center; justify-content: center;
+  }
+  .qctx-card {
+    background: rgba(255,255,255,0.65); backdrop-filter: blur(12px);
+    border-radius: 18px; padding: 3rem 4rem;
+    max-width: 920px; width: 85%; text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  }
+  .qctx-text { font-size: clamp(1.15rem, 3.2vw, 1.85rem); color: #1a2a3a; line-height: 1.65; font-weight: 300; }
+  .next-btn {
+    margin-top: 2.5rem; padding: 0.9rem 3rem;
+    background: #1a3a5c; color: white; border: none; border-radius: 50px;
+    font-size: 1.05rem; cursor: pointer; transition: all 0.2s; font-family: inherit;
+  }
+  .next-btn:hover { background: #0f2640; transform: translateY(-1px); }
+  .prot-logo-bottom { position: absolute; bottom: 1.5rem; right: 2rem; color: white; font-size: 1.1rem; font-weight: 300; opacity: 0.8; }
+  .prot-logo-bottom sup { font-size: 0.5em; vertical-align: super; }
+  
+  /* ===== QUESTION OPTIONS ===== */
+  .qopt-screen {
+    flex-direction: column; align-items: center;
+    padding-top: 4.5rem; justify-content: flex-start;
+  }
+  .timer-section { text-align: center; margin-bottom: 1.5rem; }
+  .timer-label { font-size: 0.95rem; color: rgba(255,255,255,0.85); margin-bottom: 0.15rem; }
+  .timer-display {
+    font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 700; color: #1a3a5c;
+    font-variant-numeric: tabular-nums; transition: color 0.3s;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .timer-display.urgent { color: #c0392b; animation: tpulse 0.5s infinite; }
+  @keyframes tpulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; width: 90%; max-width: 1100px; flex: 1; }
+  .option-btn {
+    background: rgba(255,255,255,0.65); backdrop-filter: blur(10px);
+    border: 2px solid transparent; border-radius: 16px;
+    padding: 1.8rem 2.2rem; font-size: clamp(0.95rem, 2.2vw, 1.3rem);
+    color: #1a2a3a; cursor: pointer; text-align: center;
+    transition: all 0.2s; line-height: 1.4; font-family: inherit;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .option-btn:hover { background: rgba(255,255,255,0.88); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+  .option-btn.selected { background: rgba(26,58,92,0.88); color: white; border-color: #1a3a5c; transform: scale(1.02); }
+  
+  /* BG styles per question */
+  .bg-q1 { background: linear-gradient(180deg, #2a6a9a 0%, #1a4a7a 35%, #3a6a8a 65%, #7aaac0 100%); }
+  .bg-q2 { background: linear-gradient(160deg, #3a8ac0 0%, #1a6aaa 30%, #5aaac5 70%, #8acad8 100%); }
+  .bg-q3 { background: linear-gradient(160deg, #1a5a8a 0%, #0f3a6a 30%, #2a6a9a 70%, #6aaab8 100%); }
+  .bg-q4 { background: linear-gradient(160deg, #2a6aaa 0%, #1a4a8a 40%, #3a7aaa 70%, #7aaac5 100%); }
+  .bg-q5 { background: linear-gradient(160deg, #5a7a8a 0%, #3a5a6a 30%, #6a8a9a 70%, #9abac8 100%); }
+  
+  /* ===== RESULTS ===== */
+  #results {
+    flex-direction: column; overflow-y: auto; background: #f0f4f8;
+    display: none; height: 100vh;
+  }
+  #results.active { display: flex; }
+  .results-hero {
+    background: linear-gradient(135deg, #1a3a5c 0%, #2563a8 60%, #1a5a8a 100%);
+    padding: 2rem 2.5rem; position: relative; flex-shrink: 0;
+  }
+  .hero-prot { font-size: 1.4rem; color: rgba(255,255,255,0.85); font-weight: 300; margin-bottom: 0.8rem; }
+  .hero-prot sup { font-size: 0.5em; vertical-align: super; }
+  .hero-label { font-size: 0.78rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.2rem; }
+  .hero-name { font-size: clamp(1.6rem, 4vw, 2.8rem); color: white; font-weight: 700; }
+  .results-body {
+    display: flex; gap: 1.5rem; padding: 1.5rem;
+    max-width: 1400px; margin: 0 auto; width: 100%;
+  }
+  .left-col { flex: 2; display: flex; flex-direction: column; gap: 1rem; }
+  .right-col { flex: 1; display: flex; flex-direction: column; gap: 1rem; }
+  
+  .persona-badge {
+    background: white; border-radius: 12px; padding: 1.2rem 1.5rem;
+    display: flex; align-items: center; gap: 1.2rem;
+    border-left: 5px solid #2563a8; box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .p-icon { font-size: 2.8rem; }
+  .p-name { font-size: 1.5rem; font-weight: 700; }
+  .p-tagline { color: #666; font-size: 0.9rem; margin-top: 0.15rem; }
+  .p-score { color: #888; font-size: 0.82rem; margin-top: 0.25rem; }
+  
+  .score-bar-card { background: white; border-radius: 12px; padding: 1rem 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .bar-track { height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; margin-bottom: 0.7rem; }
+  .bar-fill { height: 100%; border-radius: 5px; transition: width 1.2s ease; }
+  .bar-labels { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .bar-label { display: flex; align-items: center; gap: 0.35rem; font-size: 0.76rem; color: #666; }
+  .bar-label.active { font-weight: 700; color: #1a2a3a; }
+  .bar-dot { width: 8px; height: 8px; border-radius: 50%; }
+  
+  .info-card { background: white; border-radius: 12px; padding: 1.1rem 1.4rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .info-card.accent { background: #f0f7ff; }
+  .info-card-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #2563a8; margin-bottom: 0.5rem; }
+  .info-card p { color: #374151; font-size: 0.87rem; line-height: 1.6; }
+  .focus-chip { margin-top: 0.7rem; background: #dbeafe; border-radius: 6px; padding: 0.45rem 0.75rem; font-size: 0.8rem; color: #1e40af; }
+  
+  .closing-card { background: white; border-radius: 12px; padding: 1.3rem 1.5rem; border-left: 4px solid #2563a8; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .closing-card p { font-style: italic; color: #374151; font-size: 0.95rem; line-height: 1.6; }
+  
+  .right-title { font-size: 1.3rem; color: #1a2a3a; font-weight: 600; }
+  .right-sub { color: #666; font-size: 0.87rem; line-height: 1.5; }
+  .contact-card { background: white; border-radius: 12px; padding: 1.3rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 0.75rem; }
+  .contact-input {
+    width: 100%; padding: 0.8rem 1rem; border: 1.5px solid #e2e8f0;
+    border-radius: 8px; font-size: 0.92rem; color: #1a2a3a; outline: none;
+    font-family: inherit; background: white; transition: border-color 0.2s;
+  }
+  .contact-input:focus { border-color: #2563a8; }
+  .ck-label { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.8rem; color: #555; cursor: pointer; }
+  .ck-label input { margin-top: 2px; flex-shrink: 0; }
+  .submit-btn {
+    padding: 0.85rem; background: #1a3a5c; color: white; border: none;
+    border-radius: 8px; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; font-family: inherit;
+  }
+  .submit-btn:hover:not(:disabled) { background: #0f2640; }
+  .submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  
+  .answers-card { background: white; border-radius: 12px; padding: 1.2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .answers-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #2563a8; margin-bottom: 0.8rem; }
+  .ans-row { display: flex; gap: 0.7rem; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid #f0f4f8; }
+  .ans-q { background: #e2e8f0; border-radius: 4px; padding: 0.18rem 0.5rem; font-size: 0.78rem; font-weight: 600; color: #374151; min-width: 26px; text-align: center; }
+  .ans-inner { flex: 1; display: flex; justify-content: space-between; align-items: center; }
+  .ans-opt { font-size: 0.82rem; color: #374151; }
+  .ans-pts { font-size: 0.8rem; font-weight: 600; color: #2563a8; }
+  .total-row { display: flex; justify-content: space-between; align-items: center; padding-top: 0.7rem; font-weight: 700; font-size: 0.9rem; }
+  .total-score { font-size: 1.15rem; }
+  
+  .restart-btn {
+    padding: 0.75rem; background: transparent; color: #666;
+    border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.88rem;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+  }
+  .restart-btn:hover { border-color: #1a3a5c; color: #1a3a5c; }
+  
+  @media (max-width: 768px) {
+    .results-body { flex-direction: column; padding: 1rem; }
+    .welcome-features { flex-direction: column; }
+    .options-grid { grid-template-columns: 1fr; }
+    .reg-row { flex-direction: column; }
+    .qctx-card { padding: 2rem 1.5rem; }
+    .stepper { width: 75%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SCREEN: SPLASH -->
+<div id="splash" class="screen active" onclick="goTo('slide1')">
+  <div class="protiviti-logo" style="position:absolute;top:1.8rem;left:50%;transform:translateX(-50%);font-size:2rem">protiviti<sup>®</sup></div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;width:100%">
+    <div class="splash-mountain">
+      <div class="splash-peak"></div>
+    </div>
+    <div class="splash-title">
+      <span class="splash-title-main">THE PATH</span>
+      <span class="splash-title-big">TO TRANSFORMATION</span>
+    </div>
+  </div>
+  <div class="touch-hint">TOUCH ANYWHERE TO BEGIN</div>
+</div>
+
+<!-- SCREEN: SLIDE 1 -->
+<div id="slide1" class="screen intro-slide" onclick="goTo('slide2')">
+  <p class="intro-text">Over the next 24 months,<br><span class="hl">you</span> will make more than 5,000 decisions.</p>
+  <div class="protiviti-logo" style="position:absolute;bottom:2rem;right:2rem">protiviti<sup>®</sup></div>
+</div>
+
+<!-- SCREEN: SLIDE 2 -->
+<div id="slide2" class="screen intro-slide" onclick="goTo('slide3')">
+  <p class="intro-text">Most will be made under pressure.<br><span class="hl">This experience</span> isn't about what you know.</p>
+  <div class="protiviti-logo" style="position:absolute;bottom:2rem;right:2rem">protiviti<sup>®</sup></div>
+</div>
+
+<!-- SCREEN: SLIDE 3 -->
+<div id="slide3" class="screen intro-slide" onclick="goTo('registration')">
+  <p class="intro-text">it's about how you move forward<br><span class="hl">when clarity is incomplete.</span></p>
+  <div class="protiviti-logo" style="position:absolute;bottom:2rem;right:2rem">protiviti<sup>®</sup></div>
+</div>
+
+<!-- SCREEN: REGISTRATION -->
+<div id="registration" class="screen" style="flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#5bb3d0 0%,#7ec8e3 40%,#a8d8ea 70%,#caeafa 100%)">
+  <div class="protiviti-logo" style="position:absolute;top:1.8rem;left:50%;transform:translateX(-50%);font-size:2rem">protiviti<sup>®</sup></div>
+  <h1 class="reg-title">Before we begin</h1>
+  <div class="reg-form">
+    <div class="reg-row">
+      <input id="firstName" type="text" placeholder="First Name" class="reg-input" oninput="checkReg()" onkeyup="enterReg(event)">
+      <input id="lastName" type="text" placeholder="Last Name" class="reg-input" oninput="checkReg()" onkeyup="enterReg(event)">
+    </div>
+    <button id="beginBtn" class="begin-btn" disabled onclick="beginExperience()">Begin the Experience →</button>
+    <div class="privacy">
+      <p>We use this information to personalize your experience</p>
+      <p>Your information is handled in accordance with Protiviti's privacy standards.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN: WELCOME -->
+<div id="welcome" class="screen" style="flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:linear-gradient(160deg,#5bb3d0 0%,#7ec8e3 40%,#a8d8ea 70%,#caeafa 100%);padding:5rem 2rem 2rem" onclick="startQuiz()">
+  <div class="protiviti-logo" style="position:absolute;top:1.5rem;left:50%;transform:translateX(-50%);font-size:1.8rem">protiviti<sup>®</sup></div>
+  <div class="user-tag" id="welcomeUserTag"></div>
+  <div class="welcome-card">
+    <h2 class="welcome-greeting" id="welcomeGreeting">Thank you!</h2>
+    <p class="welcome-sub">This will be a short, personalized (4 – 6 minutes) designed to help you:</p>
+    <div class="welcome-features">
+      <div class="feature"><div class="feature-icon">🧠</div><p>Test how you make decisions under pressure and where you can sharpen your edge</p></div>
+      <div class="feature"><div class="feature-icon">↔️</div><p>Identify how your leadership style creates clarity for your team</p></div>
+      <div class="feature"><div class="feature-icon">📋</div><p>Receive a personalized leadership snapshot with clear, practical recommendations</p></div>
+    </div>
+  </div>
+  <p class="welcome-tagline">There are four types of decision makers... which one are you?</p>
+  <div class="touch-hint">TOUCH ANYWHERE TO CONTINUE</div>
+</div>
+
+<!-- SCREEN: QUESTION CONTEXT -->
+<div id="qContext" class="screen qctx-screen bg-q1">
+  <div class="stepper" id="ctxStepper"></div>
+  <div class="user-tag" id="ctxUserTag"></div>
+  <div class="qctx-card">
+    <p class="qctx-text" id="ctxText"></p>
+  </div>
+  <button class="next-btn" onclick="showOptions()">Next</button>
+  <div class="prot-logo-bottom">protiviti<sup>®</sup></div>
+</div>
+
+<!-- SCREEN: QUESTION OPTIONS -->
+<div id="qOptions" class="screen qopt-screen bg-q1">
+  <div class="stepper" id="optStepper"></div>
+  <div class="user-tag" id="optUserTag"></div>
+  <div class="timer-section">
+    <div class="timer-label">What do you do?</div>
+    <div class="timer-display" id="timerDisplay">00:10</div>
+  </div>
+  <div class="options-grid" id="optionsGrid"></div>
+  <div class="prot-logo-bottom">protiviti<sup>®</sup></div>
+</div>
+
+<!-- SCREEN: RESULTS -->
+<div id="results" class="screen">
+  <div class="results-hero">
+    <div class="hero-prot">protiviti<sup>®</sup></div>
+    <div class="hero-label">Executive summary for</div>
+    <div class="hero-name" id="heroName"></div>
+  </div>
+  <div class="results-body">
+    <div class="left-col" id="leftCol"></div>
+    <div class="right-col" id="rightCol"></div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const QUESTIONS = [
+  {
+    id: 1,
+    scenario: 'The path narrows. Cracks form beneath your feet. Lights flicker along the edges.',
+    question: 'What do you do? Which do you choose?',
+    timeLimit: 10,
+    bg: 'bg-q1',
+    options: [
+      { label: 'A', text: 'Push forward and deal with issues later', points: 4 },
+      { label: 'B', text: 'Stabilize the foundation, knowing it will delay progress', points: 3 },
+      { label: 'C', text: 'Pause to assess risks and move forward with the fewest unknowns', points: 2 },
+      { label: 'D', text: 'Check on the team behind you before continuing', points: 1 }
+    ]
+  },
+  {
+    id: 2,
+    scenario: 'Three paths diverge ahead. An opportunity opens up. Each direction leads forward.',
+    question: "You won't have time to explore all of them. Which do you choose?",
+    timeLimit: 10,
+    bg: 'bg-q2',
+    options: [
+      { label: 'A', text: 'One is fast but unfinished', points: 4 },
+      { label: 'B', text: 'One is solid but crowded', points: 3 },
+      { label: 'C', text: 'One is steady, but not exciting', points: 2 },
+      { label: 'D', text: 'One is new, but unproven', points: 1 }
+    ]
+  },
+  {
+    id: 3,
+    scenario: 'Alerts overlay the screen. A countdown timer appears. Everything hits at once — four interruptions animate in rapidly.',
+    question: 'Player must act or time expires. Which do you address?',
+    timeLimit: 8,
+    bg: 'bg-q3',
+    options: [
+      { label: 'A', text: 'A competitive move in the market', points: 4 },
+      { label: 'B', text: 'A customer escalation that needs attention', points: 3 },
+      { label: 'C', text: 'A resource bottleneck or unexpected staffing gap', points: 2 },
+      { label: 'D', text: 'An internal system warning that could cause problems later', points: 1 }
+    ]
+  },
+  {
+    id: 4,
+    scenario: 'Team avatars trail behind. Some slow down. Others drift off the path.',
+    question: 'What do you do?',
+    timeLimit: 10,
+    bg: 'bg-q4',
+    options: [
+      { label: 'A', text: 'Push ahead and trust the team to catch up', points: 4 },
+      { label: 'B', text: 'Delegate responsibility and keep moving forward', points: 3 },
+      { label: 'C', text: 'Regroup and realign without losing direction', points: 2 },
+      { label: 'D', text: 'Slow down to get the disengaged ones back on track, even if progress is delayed', points: 1 }
+    ]
+  },
+  {
+    id: 5,
+    scenario: 'The path disappears completely. You need clarity to move forward.',
+    question: 'What do you do?',
+    timeLimit: 10,
+    bg: 'bg-q5',
+    options: [
+      { label: 'A', text: 'Push forward and adjust once patterns emerge', points: 4 },
+      { label: 'B', text: 'Pull the team together to align before moving', points: 3 },
+      { label: 'C', text: 'Set a provisional course, and proceed cautiously', points: 2 },
+      { label: 'D', text: "Define guardrails so movement doesn't create damage", points: 1 }
+    ]
+  }
+];
+
+const PERSONAS = [
+  {
+    id: 'compass', name: 'Compass', tagline: 'See further ahead', icon: '🧭',
+    scoreMin: 18, scoreMax: 20, color: '#1a3a5c',
+    executiveSummary: 'You create clarity by moving decisively once direction is clear. Under pressure, you act quickly, favoring momentum over perfect information.',
+    pressureProfile: 'You maintain momentum even in uncertainty, deferring reinforcement to avoid slowing down. Best in dynamic environments; benefits from guardrails.',
+    clarityDescription: 'Clarity improves when decisions are made quickly and revisited. You commit early and adjust later; increases speed but risks instability.',
+    aiTransformation: 'You drive value when AI is embedded into operations quickly. Clarity comes from knowing when to standardize vs. accelerate everything.',
+    aiFocus24: 'Embed AI for immediate value; standardize selectively.',
+    riskResilience: 'You take a momentum-first posture, absorbing risk to avoid delay. Needs strong recovery paths to avoid fragility.',
+    riskFocus24: 'Define recovery paths; reduce hidden risk accumulation.',
+    growthVolatility: 'You respond well to market pressure but risk taking on too much. Clarity comes from capacity discipline.',
+    growthFocus24: 'Limit parallel responses; preserve leadership attention.',
+    closingReflection: 'Clarity comes from movement; paired with discipline, momentum becomes an advantage.'
+  },
+  {
+    id: 'accelerator', name: 'Accelerator', tagline: 'Move faster', icon: '⚡',
+    scoreMin: 14, scoreMax: 17, color: '#2563a8',
+    executiveSummary: 'You create clarity by reinforcing foundations before accelerating. Under pressure, you slow down to reduce volatility and strengthen system resilience.',
+    pressureProfile: 'You prioritize directional clarity over competing demands, deferring short-term optimization to preserve coherence.',
+    clarityDescription: 'Clarity improves when decisions are grounded in stability. You strengthen foundations before advancing.',
+    aiTransformation: 'You benefit from platform-first AI strategies emphasizing readiness, governance, and data quality before scale.',
+    aiFocus24: 'Accelerate where foundations are strong; avoid early over-engineering.',
+    riskResilience: "You take a preventative posture well-suited to rising risk pressure; works best when stability doesn't delay action.",
+    riskFocus24: 'Maintain foundational controls; prevent silent risk build-up.',
+    growthVolatility: 'You protect the organization during turbulence but may delay bold moves. Clarity improves with selective acceleration.',
+    growthFocus24: 'Balance caution with decisiveness; define thresholds for action.',
+    closingReflection: 'Clarity comes from knowing the organization can withstand pressure; paired with timely action, this builds lasting confidence.'
+  },
+  {
+    id: 'beacon', name: 'Beacon', tagline: 'Stay connected to your team', icon: '💡',
+    scoreMin: 10, scoreMax: 13, color: '#0891b2',
+    executiveSummary: 'You create clarity by aligning people, systems, and priorities. Under pressure, you prioritize bringing the organization with you.',
+    pressureProfile: 'You prioritize team alignment over short-term speed, deferring solo execution for coordinated movement.',
+    clarityDescription: 'Clarity improves when decisions are socialized and shared. You invest in alignment before commitment.',
+    aiTransformation: 'You succeed when AI ownership and adoption are clear; operating model clarity is more important than technology alone.',
+    aiFocus24: 'Pair innovation with adoption planning; prevent accountability diffusion.',
+    riskResilience: 'You treat resilience as an organizational capability; strongest when accountability is clear (not consensus-driven).',
+    riskFocus24: 'Clarify ownership during disruption; maintain shared situational awareness.',
+    growthVolatility: 'You manage disruption through alignment and shared focus; risk over-alignment slowing necessary action.',
+    growthFocus24: 'Streamline escalation paths; preserve alignment under pressure.',
+    closingReflection: 'Clarity comes from shared understanding; paired with decisiveness, alignment becomes a force multiplier.'
+  },
+  {
+    id: 'shield', name: 'Shield', tagline: 'Absorb hidden risk', icon: '🛡️',
+    scoreMin: 5, scoreMax: 9, color: '#475569',
+    executiveSummary: 'You create clarity by sequencing decisions deliberately. Under pressure, you pause to assess and preserve long-term direction.',
+    pressureProfile: 'You prioritize risk reduction and durability over near-term speed. Builds long-term reliability and confidence.',
+    clarityDescription: 'Clarity improves when decisions are intentionally sequenced. You commit to direction and adjust as information emerges.',
+    aiTransformation: 'You benefit from focused AI investments with clear ownership; clarity comes from sequencing vs. expanding use cases.',
+    aiFocus24: 'Sequence AI initiatives around outcomes; limit parallel transformation efforts.',
+    riskResilience: 'You balance preventative and pragmatic approaches; cyber works best as an enabler of progress.',
+    riskFocus24: 'Reinforce core data and platform foundations; maintain decision guardrails.',
+    growthVolatility: 'You handle competing demands by choosing what not to act on. Clarity relies on explicit tradeoffs and discipline.',
+    growthFocus24: 'Preserve attention for trajectory-changing decisions; design models preventing constant escalation.',
+    closingReflection: 'Clarity comes from knowing what matters now vs. later; sequencing becomes a powerful advantage.'
+  }
+];
+
+// ===== STATE =====
+let state = {
+  firstName: '',
+  lastName: '',
+  currentQ: 0,
+  answers: [],
+  timer: null,
+  timeLeft: 10,
+  submitted: false
+};
+
+function getPersona(score) {
+  return PERSONAS.find(p => score >= p.scoreMin && score <= p.scoreMax) || PERSONAS[3];
+}
+
+// ===== NAVIGATION =====
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+// ===== REGISTRATION =====
+function checkReg() {
+  const fn = document.getElementById('firstName').value.trim();
+  const ln = document.getElementById('lastName').value.trim();
+  document.getElementById('beginBtn').disabled = !fn || !ln;
+}
+
+function enterReg(e) {
+  if (e.key === 'Enter') beginExperience();
+}
+
+function beginExperience() {
+  state.firstName = document.getElementById('firstName').value.trim();
+  state.lastName = document.getElementById('lastName').value.trim();
+  if (!state.firstName || !state.lastName) return;
+  const fullName = state.firstName + ' ' + state.lastName;
+  document.getElementById('welcomeUserTag').textContent = fullName;
+  document.getElementById('welcomeGreeting').textContent = 'Thank you ' + state.firstName + '!';
+  goTo('welcome');
+}
+
+// ===== QUIZ =====
+function startQuiz() {
+  state.currentQ = 0;
+  state.answers = [];
+  showQuestion();
+}
+
+function buildStepper(containerId, current) {
+  const el = document.getElementById(containerId);
+  let html = '';
+  QUESTIONS.forEach((q, i) => {
+    const cls = i === current ? 'active' : i < current ? 'done' : '';
+    html += `<div class="step-dot ${cls}"><span class="step-num">${i+1}</span></div>`;
+    if (i < QUESTIONS.length - 1) {
+      html += `<div class="step-line ${i < current ? 'done' : ''}"></div>`;
+    }
+  });
+  el.innerHTML = html;
+}
+
+function showQuestion() {
+  const q = QUESTIONS[state.currentQ];
+  const userTag = state.firstName + ' ' + state.lastName;
+
+  // Context screen
+  const ctxEl = document.getElementById('qContext');
+  ctxEl.className = 'screen qctx-screen ' + q.bg;
+  document.getElementById('ctxText').innerHTML = q.scenario + '<br><strong>' + q.question + '</strong>';
+  document.getElementById('ctxUserTag').textContent = userTag;
+  buildStepper('ctxStepper', state.currentQ);
+  goTo('qContext');
+}
+
+function showOptions() {
+  const q = QUESTIONS[state.currentQ];
+  const userTag = state.firstName + ' ' + state.lastName;
+  
+  const optEl = document.getElementById('qOptions');
+  optEl.className = 'screen qopt-screen ' + q.bg;
+  document.getElementById('optUserTag').textContent = userTag;
+  buildStepper('optStepper', state.currentQ);
+
+  // Build options grid
+  const grid = document.getElementById('optionsGrid');
+  grid.innerHTML = q.options.map(opt => `
+    <button class="option-btn" onclick="selectOption('${opt.label}', ${opt.points})">${opt.text}</button>
+  `).join('');
+
+  goTo('qOptions');
+  startTimer(q.timeLimit);
+}
+
+function startTimer(seconds) {
+  clearInterval(state.timer);
+  state.timeLeft = seconds;
+  updateTimerDisplay();
+  state.timer = setInterval(() => {
+    state.timeLeft--;
+    updateTimerDisplay();
+    if (state.timeLeft <= 0) {
+      clearInterval(state.timer);
+      recordAnswer('none', 0);
+      advance();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const d = document.getElementById('timerDisplay');
+  const m = Math.floor(state.timeLeft / 60);
+  const s = state.timeLeft % 60;
+  d.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  d.className = 'timer-display' + (state.timeLeft <= 3 ? ' urgent' : '');
+}
+
+function selectOption(label, points) {
+  clearInterval(state.timer);
+  recordAnswer(label, points);
+  // Highlight selection
+  document.querySelectorAll('#optionsGrid .option-btn').forEach(btn => {
+    if (btn.textContent.trim() === QUESTIONS[state.currentQ].options.find(o => o.label === label)?.text) {
+      btn.classList.add('selected');
+    }
+  });
+  setTimeout(advance, 700);
+}
+
+function recordAnswer(label, points) {
+  const q = QUESTIONS[state.currentQ];
+  const existing = state.answers.findIndex(a => a.questionId === q.id);
+  const answer = { questionId: q.id, selectedOption: label, points };
+  if (existing >= 0) state.answers[existing] = answer;
+  else state.answers.push(answer);
+}
+
+function advance() {
+  state.currentQ++;
+  if (state.currentQ < QUESTIONS.length) {
+    showQuestion();
+  } else {
+    showResults();
+  }
+}
+
+// ===== RESULTS =====
+function showResults() {
+  const total = state.answers.reduce((s, a) => s + a.points, 0);
+  const persona = getPersona(total);
+  
+  document.getElementById('heroName').textContent =
+    state.firstName.toUpperCase() + ' ' + state.lastName.toUpperCase();
+
+  // Left column
+  const lc = document.getElementById('leftCol');
+  lc.innerHTML = `
+    <div class="persona-badge" style="border-left-color:${persona.color}">
+      <div class="p-icon">${persona.icon}</div>
+      <div>
+        <div class="p-name" style="color:${persona.color}">${persona.name}</div>
+        <div class="p-tagline">${persona.tagline}</div>
+        <div class="p-score">Score: ${total} / 20</div>
+      </div>
+    </div>
+
+    <div class="score-bar-card">
+      <div class="bar-track"><div class="bar-fill" style="width:${(total/20)*100}%;background:${persona.color}" id="barFill"></div></div>
+      <div class="bar-labels">
+        ${PERSONAS.map(p => `
+          <div class="bar-label ${p.id === persona.id ? 'active' : ''}">
+            <div class="bar-dot" style="background:${p.color}"></div>${p.name}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-title">Your Leadership Profile</div>
+      <p>${persona.executiveSummary}</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Your Pressure Profile</div>
+      <p>${persona.pressureProfile}</p>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">How You Create or Lose Clarity</div>
+      <p>${persona.clarityDescription}</p>
+    </div>
+    <div class="info-card accent">
+      <div class="info-card-title">AI &amp; Technology Transformation</div>
+      <p>${persona.aiTransformation}</p>
+      <div class="focus-chip"><strong>24-Month Focus:</strong> ${persona.aiFocus24}</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Protect from Risk &amp; Drive Resilience</div>
+      <p>${persona.riskResilience}</p>
+      <div class="focus-chip"><strong>24-Month Focus:</strong> ${persona.riskFocus24}</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">Respond to Growth &amp; Volatility</div>
+      <p>${persona.growthVolatility}</p>
+      <div class="focus-chip"><strong>24-Month Focus:</strong> ${persona.growthFocus24}</div>
+    </div>
+    <div class="closing-card" style="border-left-color:${persona.color}">
+      <p>${persona.closingReflection}</p>
+    </div>
+  `;
+
+  // Right column
+  const rc = document.getElementById('rightCol');
+  rc.innerHTML = `
+    <div class="right-title">Want the full report?</div>
+    <p class="right-sub">Receive a detailed leadership snapshot with personalized insights and recommendations.</p>
+    <div class="contact-card">
+      <input id="resEmail" type="email" placeholder="Business email address" class="contact-input">
+      <select id="resCountry" class="contact-input" style="cursor:pointer">
+        <option value="">Country</option>
+        <option>United States</option><option>United Kingdom</option><option>Canada</option>
+        <option>Australia</option><option>Germany</option><option>France</option>
+        <option>Japan</option><option>Singapore</option><option>India</option>
+        <option>Brazil</option><option>Other</option>
+      </select>
+      <label class="ck-label"><input type="checkbox" id="contactCk"> Would you like to be contacted about future promotions or content?</label>
+      <button class="submit-btn" id="submitBtn" onclick="submitResults(${total}, '${persona.id}')">Submit</button>
+    </div>
+
+    <div class="answers-card">
+      <div class="answers-title">Your Responses</div>
+      ${state.answers.map(a => `
+        <div class="ans-row">
+          <div class="ans-q">Q${a.questionId}</div>
+          <div class="ans-inner">
+            <div class="ans-opt">Option ${a.selectedOption}</div>
+            <div class="ans-pts" style="color:${persona.color}">${a.points} pt${a.points !== 1 ? 's' : ''}</div>
+          </div>
+        </div>
+      `).join('')}
+      <div class="total-row">
+        <span>Total Score</span>
+        <span class="total-score" style="color:${persona.color}">${total} / 20</span>
+      </div>
+    </div>
+
+    <button class="restart-btn" onclick="restart()">Start Over</button>
+  `;
+
+  goTo('results');
+}
+
+function submitResults(score, personaId) {
+  const email = document.getElementById('resEmail').value;
+  if (!email) { alert('Please enter your email address.'); return; }
+  
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  // === TODO: Replace with actual API call ===
+  const payload = {
+    firstName: state.firstName,
+    lastName: state.lastName,
+    email: email,
+    country: document.getElementById('resCountry').value,
+    contactConsent: document.getElementById('contactCk').checked,
+    score: score,
+    persona: personaId,
+    answers: state.answers,
+    completedAt: new Date().toISOString()
+  };
+  console.log('📤 API Payload:', payload);
+  // fetch('https://your-api-endpoint.com/submissions', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) })
+  // ==========================================
+  
+  setTimeout(() => {
+    btn.textContent = '✓ Submitted!';
+    btn.style.background = '#16a34a';
+  }, 1200);
+}
+
+function restart() {
+  state = { firstName: '', lastName: '', currentQ: 0, answers: [], timer: null, timeLeft: 10, submitted: false };
+  document.getElementById('firstName').value = '';
+  document.getElementById('lastName').value = '';
+  document.getElementById('beginBtn').disabled = true;
+  goTo('splash');
+}
+</script>
+</body>
+</html>
