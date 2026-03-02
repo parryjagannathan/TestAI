@@ -1,6 +1,6 @@
 // src/app/app.component.ts
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+//import { Component, OnInit } from '@angular/core';
+//import { CommonModule } from '@angular/common';
 import { SplashComponent } from './components/splash/splash.component';
 import { IntroSlidesComponent } from './components/intro-slides/intro-slides.component';
 import { RegistrationComponent } from './components/registration/registration.component';
